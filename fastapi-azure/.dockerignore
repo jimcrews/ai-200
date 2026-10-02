@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+README.md
+*.bicep
+Dockerfile
+.dockerignore
+
+# Python / tooling artefacts
+**/.venv
+**/__pycache__
+**/*.py[oc]
+**/.pytest_cache
+
+# Tests aren't needed in the runtime image
+api/test_*.py

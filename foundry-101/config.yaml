@@ -1,0 +1,5 @@
+llm:
+  max_tokens: 150
+  temperature: 0.5
+  top_p: 0.5
+  max_messages_in_history: 3
