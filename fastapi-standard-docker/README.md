@@ -1,5 +1,13 @@
 
-# Create API
+# Getting Started
+
+``` shell
+# clone repo, then 
+cd api
+uv sync
+```
+
+## From Scratch - Create API
 
 ``` shell
 cd api

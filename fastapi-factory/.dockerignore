@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env*
+README.md
+Dockerfile
+.dockerignore
+
+# Python / tooling artefacts
+**/.venv
+**/__pycache__
+**/*.py[oc]
+**/.pytest_cache
+**/.ruff_cache
+**/.DS_Store
+
+# Tests aren't needed in the runtime image
+tests/
