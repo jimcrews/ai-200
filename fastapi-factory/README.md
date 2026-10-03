@@ -202,14 +202,14 @@ az group delete --name rg-fastapi --yes
 
 ## Copy to a New Project
 
-Make a new project from this one by copying the folder and renaming it. The examples use `my-api` as the new name.
+Make a new project from this one by copying the folder and renaming it. The examples use `openai-api` as the new name.
 
 ### 1. Copy the folder
 
 ``` shell
 cd ~/repos/ai-200
-cp -R fastapi-factory my-api
-cd my-api
+cp -R fastapi-factory openai-api
+cd openai-api
 ```
 
 ### 2. Delete the generated files
@@ -226,24 +226,24 @@ find . -name __pycache__ -type d -prune -exec rm -rf {} +
 ### 3. Rename the package folder
 
 ``` shell
-mv src/fastapi_factory src/my_api
+mv src/fastapi_factory src/openai_api
 ```
 
 ### 4. Replace the name in the files
 
-Replace `fastapi-factory` with `my-api`, and `fastapi_factory` with `my_api`:
+Replace `fastapi-factory` with `openai-api`, and `fastapi_factory` with `openai_api`:
 
 | File                                   | What to change                                                                     |
 | -------------------------------------- | ---------------------------------------------------------------------------------- |
-| `pyproject.toml`                       | `name = "my-api"`, the script line `my-api = "my_api:main"`, and `description`    |
-| `src/my_api/__init__.py`               | The import, the docstring, and the `"my_api.main:create_app"` string              |
-| `src/my_api/main.py`                   | The imports                                                                        |
-| `src/my_api/config.py`                 | The comment on the server options; the default `app_name` (`"FastAPI Factory"`)   |
-| `src/my_api/dependencies.py`           | The import                                                                         |
-| `src/my_api/api/routes/*.py`           | The imports (`health.py`, `root.py`, `echo.py`, and any new routes)                |
+| `pyproject.toml`                       | name, the script line, and description                                             |
+| `src/openai_api/__init__.py`           | The import, the docstring, and the `"openai_api.main:create_app"` string           |
+| `src/openai_api/main.py`               | The imports                                                                        |
+| `src/openai_api/config.py`             | The comment on the server options; the default `app_name` (`"FastAPI Factory"`)   |
+| `src/openai_api/dependencies.py`       | The import                                                                         |
+| `src/openai_api/api/routes/*.py`       | The imports (`health.py`, `root.py`, `echo.py`, and any new routes)                |
 | `tests/conftest.py`                    | The imports                                                                        |
 | `tests/test_api.py`                    | The imports                                                                        |
-| `Dockerfile`                           | The `PYTHONPATH` comment and the `CMD` line (`my_api.main:create_app`)             |
+| `Dockerfile`                           | The `PYTHONPATH` comment and the `CMD` line (`openai_api.main:create_app`)             |
 | `.env.example`                         | The comments, and `APP_APP_NAME`                                                   |
 
 Don't edit `uv.lock` or `requirements.txt` by hand. They're regenerated in step 5.
@@ -260,8 +260,8 @@ grep -rn "fastapi.factory" --exclude-dir=.venv --exclude=uv.lock --exclude=requi
 ``` shell
 uv sync                    # new .venv; updates the project name in uv.lock
 uv export --no-dev --no-emit-project --format requirements-txt -o requirements.txt
-cp .env.example .env       # optional
+cp .env.example .env
 uv run pytest
-uv run my-api
+uv run openai-api
 curl http://127.0.0.1:8000/health
 ```
