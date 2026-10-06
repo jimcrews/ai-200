@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-app-aks-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-app
+  template:
+    metadata:
+      labels:
+        app: ai-app
+    spec:
+      containers:
+        - name: ai-app
+          image: acrjc20261002.azurecr.io/ai-agent-api:v1
+          ports:
+            - containerPort: 8000
+          # Every key in the secret becomes an env var of the same name (APP_* as read by config.py)
+          envFrom:
+            - secretRef:
+                name: azure-openai-secret
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-app-aks-service
+spec:
+  selector:
+    app: ai-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer

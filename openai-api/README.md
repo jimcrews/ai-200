@@ -49,6 +49,9 @@ docker run --rm -p 8000:8000 -e APP_ENVIRONMENT=staging -e APP_LOG_LEVEL=DEBUG o
 ### Deploy Foundry and Test API locally
 
 ``` shell
+# Register provider if not already registered
+az provider register --namespace Microsoft.ContainerService
+
 # Resource Group
 
 az group create --name rg-openai-api --location australiaeast
@@ -80,7 +83,7 @@ uv run openai-api
 curl -X POST http://127.0.0.1:8000/run -H "Content-Type: application/json" -d '{"prompt": "Explain FastAPI in one sentence."}'
 ```
 
-### Deploy API to Azure
+### Build container and push to ACR
 
 ``` shell
 # Create ACR
@@ -96,6 +99,8 @@ az acr build \
 --image ai-agent-api:v1 \
 --file Dockerfile .
 ```
+
+### Create and Deploy Container App
 
 ``` shell
 # Create Container App Environment
@@ -119,12 +124,60 @@ APP_AZURE_OPENAI_API_KEY=xxx \
 APP_LLM_MODEL_DEPLOYMENT_NAME=jimapp001ai200-llm-deploy
 ```
 
-### Test
+#### Test
 ``` shell
 curl https://ai-agent-service.salmonmoss-c6d9629a.australiaeast.azurecontainerapps.io/health
 
 curl -X POST https://ai-agent-service.salmonmoss-c6d9629a.australiaeast.azurecontainerapps.io/run -H "Content-Type: application/json" -d '{"prompt": "Explain photosynthesis in one sentence."}'
 ```
+
+### Create and Deploy Kubernetes Service
+
+Requires Azure CLI, `kubectl`, and `kubelogin` (install with `az aks install-cli`, or via your package manager).
+
+``` shell
+# Create AKS cluster
+az aks create \
+--resource-group rg-openai-api \
+--name ai-agent-aks \
+--node-count 1 \
+--node-vm-size Standard_D2s_v3 \
+--enable-managed-identity \
+--attach-acr acrjc20261002
+
+# Get AKS credentials into ~/.kube/config (replacing any old entries for this cluster)
+az aks get-credentials \
+--resource-group rg-openai-api \
+--name ai-agent-aks \
+--overwrite-existing
+
+# Add a Kubernetes secret for your Azure OpenAI credentials
+# copy from Foundry bicep output or .env
+kubectl create secret generic azure-openai-secret \
+--from-literal=APP_AZURE_OPENAI_ENDPOINT='https://jimapp001ai200.services.ai.azure.com/openai/v1' \
+--from-literal=APP_AZURE_OPENAI_API_KEY='xxx' \
+--from-literal=APP_LLM_MODEL_DEPLOYMENT_NAME='jimapp001ai200-llm-deploy'
+
+# Apply the Kubernetes deployment and service configuration
+kubectl apply -f aks_deployment_manifest.yaml
+
+# View all resources to verify that the pods, deployment, and service are created successfully.
+kubectl get all
+```
+
+#### Test
+
+``` shell
+## For AKS: resolve the Service external IP (LoadBalancer) and build the app URL.
+# `kubectl get all` also shows the external IP
+kubectl get svc ai-app-aks-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+
+curl http://4.147.115.20/health
+curl -X POST http://4.147.115.20/run -H "Content-Type: application/json" -d '{"prompt": "Explain photosynthesis in one sentence."}'
+```
+
+---
 
 ### Cleanup
 
@@ -137,4 +190,7 @@ az cognitiveservices account list-deleted --output table
 
 # The following commands permanently delete the soft-deleted accounts.
 az cognitiveservices account purge --location australiaeast --resource-group rg-openai-api --name jimapp001ai200
+
+# Delete other resource group created
+az group delete --name NetworkWatcherRG --yes
 ```
