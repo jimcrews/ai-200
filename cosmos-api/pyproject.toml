@@ -1,0 +1,31 @@
+[project]
+name = "cosmos-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Jim Crews", email = "crews.jim@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "azure-cosmos>=4.17.1",
+    "fastapi>=0.142.2",
+    "openai>=3.26.0",
+    "pydantic-settings>=2.15.0",
+    "pymupdf4llm>=1.28.2",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+cosmos-api = "cosmos_api:main"
+
+[build-system]
+requires = ["uv_build>=0.11.21,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.13.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
