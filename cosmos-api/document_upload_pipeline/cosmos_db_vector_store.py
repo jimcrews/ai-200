@@ -153,6 +153,7 @@ class CosmosDBVectorStore:
         # Build the complete query
         where_clause = f"WHERE {' AND '.join(where_parts)}" if where_parts else ""
 
+        # returns the most similar results first. don't add ASC or DESC to order.
         query = f"""
             {select_clause}
             FROM c

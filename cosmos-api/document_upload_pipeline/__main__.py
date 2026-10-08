@@ -89,8 +89,11 @@ def query(openai_client: OpenAI, container_client: ContainerProxy) -> None:
     vector_store = CosmosDBVectorStore(
         container_client=container_client, partition_key=PARTITION_KEY
     )
-
+    
+    # First, tranform the query into an embedding
     query_embedding = pdf_embedding_generator._generate_embedding(TEST_QUERY_TEXT)
+    
+    # using the query embedding, search cosmosdb for similar docs
     results = vector_store.vector_search(
         query_embedding=query_embedding,
         top_k=settings.vector_search_top_k,
