@@ -80,7 +80,7 @@ resource embeddingModelDeployment 'Microsoft.CognitiveServices/accounts/deployme
     llmModelDeployment  // Explicitly wait for LLM to finish first
   ]
   sku : {
-    capacity: 1
+    capacity: 10  // units of 1K tokens/min; capacity 1 caused 429s (60s retry waits) during upload
     name: 'GlobalStandard'
   }
   properties: {

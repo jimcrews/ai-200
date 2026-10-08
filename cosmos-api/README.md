@@ -6,10 +6,12 @@ have the LLM answer from those documents only.
 1. **Upload** (`--process upload`): each PDF in `document_upload_pipeline/documents` is
    converted to text, embedded with `text-embedding-3-small` (512 dimensions), and stored
    in the Cosmos DB container as one item holding the full text and its embedding.
+
 2. **Search** (`--process query`): the question is embedded with the same model, and a
    Cosmos DB vector search (cosine similarity, DiskANN index) returns the closest
    documents, limited by `APP_VECTOR_SEARCH_TOP_K` and
    `APP_VECTOR_SEARCH_SIMILARITY_THRESHOLD`.
+   
 3. **Answer**: the full text of the returned documents is sent to `gpt-4.1-mini` with
    the question, and a system prompt telling it to answer only from those documents.
 

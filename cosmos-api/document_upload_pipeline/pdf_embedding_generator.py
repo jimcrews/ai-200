@@ -69,7 +69,7 @@ class PDFEmbeddingGenerator:
         print(f"Found {len(pdf_files)} PDF file(s) in {folder_path}")
 
         for pdf_path in pdf_files:
-            print(f"Processing: {pdf_path.name}")
+            print(f"Extracting: {pdf_path.name}")
             try:
                 doc_content = self._extract_text_from_pdf(pdf_path)
                 documents.append(
@@ -158,7 +158,7 @@ class PDFEmbeddingGenerator:
         processed_docs = []
 
         for doc in documents:
-            print(f"\nProcessing: {doc['filename']}")
+            print(f"\nEmbedding: {doc['filename']}")
             doc_content = doc["content"]
 
             if not doc_content:
