@@ -1,0 +1,35 @@
+[project]
+name = "pg-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Jim Crews", email = "crews.jim@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.142.4",
+    "openai>=3.26.0",
+    "pgvector>=0.5.0",
+    "psycopg[binary]>=3.3.6",
+    "pydantic-settings>=2.15.0",
+    "pymupdf4llm>=1.28.2",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+pg-api = "pg_api:main"
+
+[build-system]
+requires = ["uv_build>=0.11.21,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.13.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+src = ["src", "document_upload_pipeline"]
