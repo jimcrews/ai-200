@@ -80,11 +80,12 @@ az deployment group create \
 # Azure requires 8–128 characters, using at least three of: 
 #   uppercase, lowercase, digits, symbols.
 read -s -p "Enter PostgreSQL Admin Password: " PG_PASS
-echo
+echo $PG_PASS
 
 # Your public IPv4 address (firewall rules don't accept IPv6), added to the server
 # firewall so you can connect locally. On a VPN/proxy, check it matches your real egress IP.
 MY_IP=$(curl -4 -s https://ifconfig.me)
+echo $MY_IP
 
 az deployment group create \
 --resource-group rg-pg-api \
@@ -94,6 +95,33 @@ az deployment group create \
   pgDbname=jimpgai200db \
   passW="$PG_PASS" \
   clientIp="$MY_IP"
+```
+
+## Test psql
+``` shell
+# from my terminal
+PGPASSWORD="$PG_PASS" psql \
+"host=jimpgai200server.postgres.database.azure.com port=5432 dbname=jimpgai200db user=pgadmin sslmode=require"
+
+# from cloudshell
+psql "host=jimpgai200server.postgres.database.azure.com port=5432 dbname=jimpgai200db user=pgadmin sslmode=require"
+```
+SHOW azure.extensions;                 -- should list VECTOR (the Bicep allow-list)
+CREATE EXTENSION IF NOT EXISTS vector; -- the upload does this too; proves it's allowed
+\dx                                    -- installed extensions and their versions
+\dt                                    -- tables; "documents" appears after the first upload
+\d documents                           -- columns and the HNSW index
+SELECT filename, length(content), uploaded_at FROM documents;
+\q                                     -- quit
+
+``` sql
+SELECT filename,
+       left(content, 20) AS content,
+       (embedding::real[])[1:3] AS embedding,
+       vector_dims(embedding) AS dims,
+       uploaded_at
+FROM documents;
+
 ```
 
 ## Configure .env

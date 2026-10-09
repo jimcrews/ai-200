@@ -70,7 +70,7 @@ def main() -> None:
             print("Nothing to save")
             return
 
-        # save to Postgres; the with block closes the connection when done
+        # save to Postgres
         with create_postgres_client() as conn:
             pg_processor = PgProcessor(conn)
             pg_processor.create_table(embeddings_processor.embedding_dimensions)

@@ -53,6 +53,7 @@ class EmbeddingsProcessor:
             raise ValueError("Empty text provided for embedding generation")
 
         # Truncate text if it exceeds the maximum length
+        # text-embedding-3-small accepts at most 8,191 tokens per input
         if len(text) > self.max_text_length:
             text = text[: self.max_text_length]
             print(f"  ⚠ Text truncated to {self.max_text_length} characters")
