@@ -72,3 +72,9 @@ uv run uv run producer.py
 ``` shell
 uv run worker.py
 ```
+
+## Clean Up
+
+``` shell
+az group delete --name rg-doc-bus --yes
+```
